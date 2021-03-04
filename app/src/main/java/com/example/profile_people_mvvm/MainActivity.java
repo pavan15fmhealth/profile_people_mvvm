@@ -11,10 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import androidx.appcompat.widget.SearchView;
+
+import android.view.inputmethod.EditorInfo;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -24,6 +28,7 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity {
     public static final int ADD_NOTE_REQUEST = 1;
     private NoteViewModel noteViewModel;
+    final NoteAdapter adapter = new NoteAdapter();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,12 +49,21 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setHasFixedSize(true);
 
-        final NoteAdapter adapter = new NoteAdapter();
+//        final NoteAdapter adapter = new NoteAdapter();
         recyclerView.setAdapter(adapter);
 
 
         noteViewModel = ViewModelProviders.of(this).get(NoteViewModel.class);
-        noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+//        noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+//            @Override
+//            public void onChanged(List<Note> notes) {
+//                adapter.setNotes(notes);
+//            }
+//        });
+
+        getAllNotes();
+
+        noteViewModel.getSearchNotes().observe(this, new Observer<List<Note>>() {
             @Override
             public void onChanged(List<Note> notes) {
                 adapter.setNotes(notes);
@@ -72,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(recyclerView);
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -96,6 +112,34 @@ public class MainActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main_menu,menu);
+        menuInflater.inflate(R.menu.search_note,menu);
+
+        MenuItem menuItem = menu.findItem(R.id.search_note_action);
+        SearchView searchView = (SearchView)menuItem.getActionView();
+        searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        searchView.setQueryHint("Type here to Search");
+
+
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if(newText.length() == 0 )
+                {
+                    getAllNotes();
+                    return false;
+                }
+                noteViewModel.searchNotes(newText);
+
+                Log.d("TAG_ROOM", "onQueryTextChange: "+newText);
+                return false;
+            }
+        });
         return true;
     }
 
@@ -110,5 +154,15 @@ public class MainActivity extends AppCompatActivity {
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    public void getAllNotes()
+    {
+        noteViewModel.getAllNotes().observe(this, new Observer<List<Note>>() {
+            @Override
+            public void onChanged(List<Note> notes) {
+                adapter.setNotes(notes);
+            }
+        });
     }
 }

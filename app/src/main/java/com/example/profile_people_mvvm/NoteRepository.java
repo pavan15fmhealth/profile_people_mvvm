@@ -4,12 +4,15 @@ import android.app.Application;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import java.util.List;
 
 public class NoteRepository {
     private NoteDao noteDao;
     private LiveData<List<Note>> allNotes;
+    private static MutableLiveData<List<Note>> searchedNotes;
+
 
     public NoteRepository(Application application){
         NoteDatabase database = NoteDatabase.getInstance(application);
@@ -38,6 +41,17 @@ public class NoteRepository {
     public LiveData<List<Note>> getAllNotes(){
         return allNotes;
     }
+
+    public void searchNotes(String keyword){
+        String[] params = { keyword };
+         new searchNotesAsyncTask(noteDao).execute(params);
+    }
+
+    public LiveData<List<Note>> getSearchNotes(){
+        return searchedNotes;
+    }
+
+
 
 
     private  static class InsertNoteAsyncTask extends AsyncTask<Note,Void,Void>{
@@ -97,4 +111,22 @@ public class NoteRepository {
             return null;
         }
     }
+
+
+    private class searchNotesAsyncTask extends AsyncTask<String,Void,Void>{
+        private  NoteDao noteDao;
+
+        private searchNotesAsyncTask(NoteDao noteDao){
+            this.noteDao = noteDao;
+        }
+
+
+        @Override
+        protected Void doInBackground(String... strings) {
+             searchedNotes.postValue(noteDao.searchNotes(strings[0]));
+             return  null;
+        }
+    }
+
+
 }
