@@ -42,29 +42,29 @@ public class NoteRepository {
         return allNotes;
     }
 
-    public void searchNotes(String keyword){
-        String[] params = { keyword };
-         new searchNotesAsyncTask(noteDao).execute(params);
-    }
+//    public void searchNotes(String keyword){
+//        String[] params = { keyword };
+//         new searchNotesAsyncTask(noteDao).execute(params);
+//    }
 
-    public LiveData<List<Note>> getSearchNotes(){
-        return searchedNotes;
+    public LiveData<List<Note>> getSearchNotes(String keyWord){
+        return noteDao.searchNotes(keyWord);
     }
 
 
 
 
     private  static class InsertNoteAsyncTask extends AsyncTask<Note,Void,Void>{
-       private  NoteDao noteDao;
+        private  NoteDao noteDao;
 
-       private InsertNoteAsyncTask(NoteDao noteDao){
-           this.noteDao = noteDao;
-       }
+        private InsertNoteAsyncTask(NoteDao noteDao){
+            this.noteDao = noteDao;
+        }
 
 
         @Override
         protected Void doInBackground(Note... notes) {
-           noteDao.insert(notes[0]);
+            noteDao.insert(notes[0]);
             return null;
         }
     }
@@ -83,6 +83,7 @@ public class NoteRepository {
             return null;
         }
     }
+
     private  static class DeleteNoteAsyncTask extends AsyncTask<Note,Void,Void>{
         private  NoteDao noteDao;
 
@@ -112,21 +113,25 @@ public class NoteRepository {
         }
     }
 
-
-    private class searchNotesAsyncTask extends AsyncTask<String,Void,Void>{
-        private  NoteDao noteDao;
-
-        private searchNotesAsyncTask(NoteDao noteDao){
-            this.noteDao = noteDao;
-        }
-
-
-        @Override
-        protected Void doInBackground(String... strings) {
-             searchedNotes.postValue(noteDao.searchNotes(strings[0]));
-             return  null;
-        }
+    public int whilsty(int a){
+        return a;
     }
+
+
+//    private class searchNotesAsyncTask extends AsyncTask<String,Void,Void>{
+//        private  NoteDao noteDao;
+//
+//        private searchNotesAsyncTask(NoteDao noteDao){
+//            this.noteDao = noteDao;
+//        }
+//
+//
+//        @Override
+//        protected Void doInBackground(String... strings) {
+//             searchedNotes.postValue(noteDao.searchNotes(strings[0]));
+//             return  null;
+//        }
+//    }
 
 
 }

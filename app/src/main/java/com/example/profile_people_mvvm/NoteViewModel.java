@@ -16,25 +16,24 @@ public class NoteViewModel extends AndroidViewModel {
 
     private NoteRepository repository;
     private LiveData<List<Note>> allNotes;
-    private MutableLiveData<List<Note>> searchedNotes;
 
-    Context context;
 
     public NoteViewModel(@NonNull Application application) {
         super(application);
         repository = new NoteRepository(application);
         allNotes = repository.getAllNotes();
-        context = application.getApplicationContext();
+//        context = application.getApplicationContext();
 
-        repository.getSearchNotes().observe((LifecycleOwner) context, new Observer<List<Note>>() {
-            @Override
-            public void onChanged(List<Note> notes) {
-                searchedNotes.postValue(notes);
-            }
-        });
+//        repository.getSearchNotes().observe((LifecycleOwner) this, new Observer<List<Note>>() {
+//            @Override
+//            public void onChanged(List<Note> notes) {
+//                searchedNotes.postValue(notes);
+//            }
+//        });
     }
-    public void insert(Note note){
+    public boolean insert(Note note){
         repository.insert(note);
+        return true;
     }
     public void update(Note note){
         repository.update(note);
@@ -49,14 +48,8 @@ public class NoteViewModel extends AndroidViewModel {
     {
         return allNotes;
     }
-    public void searchNotes(String keyword){
-        repository.searchNotes(keyword);
-
-    }
-
-    public LiveData<List<Note>> getSearchNotes()
-    {
-        return searchedNotes;
+    public LiveData<List<Note>> searchNotes(String keyword){
+        return repository.getSearchNotes(keyword);
     }
 
 

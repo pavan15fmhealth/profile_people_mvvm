@@ -27,8 +27,8 @@ public interface NoteDao {
     @Query("SELECT * FROM note_table ORDER BY priority DESC")
     LiveData<List<Note>> getAllNotes();
 
-    @Query("SELECT * FROM note_table where title LIKE '% :keyWord %' ORDER BY priority DESC")
-    List<Note> searchNotes(String keyWord);
+    @Query("SELECT * FROM note_table where title LIKE '%' || :keyWord || '%' ORDER BY priority DESC")
+    LiveData<List<Note>> searchNotes(String keyWord);
 
 
 }

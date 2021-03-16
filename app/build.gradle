@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
 }
+apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 30
@@ -55,6 +56,19 @@ dependencies {
 
 
     testImplementation 'junit:junit:4.+'
+    // https://mvnrepository.com/artifact/com.google.truth/truth
+    testImplementation group: 'com.google.truth', name: 'truth', version: '1.1.2'
+    testImplementation "org.mockito:mockito-core:1.10.19"
+    androidTestImplementation "org.mockito:mockito-android:1.10.19"
+
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
+    androidTestImplementation 'com.google.truth:truth:1.1.2'
+    implementation "androidx.core:core-ktx:+"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+
+}
+repositories {
+    mavenCentral()
 }
